@@ -1,6 +1,7 @@
 #ifndef MAX30102_HW_H
 #define MAX30102_HW_H
 
-#define HELLO_WORLD 2
+#define MAX30102_I2C_DEFAULT_ADDR 0b1010111 // 0x57
 
+#define MAX30102_REG_PART_ID 0xFF
 #endif
