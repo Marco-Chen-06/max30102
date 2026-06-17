@@ -38,6 +38,40 @@ int max30102_init(I2C_HandleTypeDef *hi2c) {
 	return 0;
 }
 
+int max30102_reset(I2C_HandleTypeDef *hi2c) {
+	max30102_write_byte(hi2c, MAX30102_REG_MODE_CONFIG, 0x40);
+	return 0;
+}
+
+int max30102_clear_fifo(I2C_HandleTypeDef *hi2c) {
+	max30102_write_byte(hi2c, MAX30102_FIFO_WR_PTR, 0x00);
+	max30102_write_byte(hi2c, MAX30102_OVF_COUNTER, 0x00);
+	max30102_write_byte(hi2c, MAX30102_FIFO_RD_PTR, 0x00);
+	return 0;
+}
+
+// @ param fifo_a_full Number of empty samples when A_FULL interrupt issued (0 < fifo_a_full < 15)
+int max30102_init_fifo(I2C_HandleTypeDef *hi2c, max30102_smp_ave_t smp_ave, uint8_t rollover_en, uint8_t fifo_a_full) {
+	uint8_t config = 0;
+	config = ((smp_ave & 0x07) << MAX30102_FIFO_CONFIG_SMP_AVE) | ((rollover_en & 0x01) << MAX30102_FIFO_CONFIG_ROLLOVER_EN) | ((fifo_a_full & 0x0F) << MAX30102_FIFO_CONFIG_FIFO_A_FULL);
+	max30102_write_byte(hi2c, MAX30102_REG_FIFO_CONFIG, config);
+	return 0;
+}
+
+int max30102_set_led_pulse_width(I2C_HandleTypeDef *hi2c, max30102_led_pw_t pulse_width) {
+	uint8_t config = 0;
+	max30102_read_byte(hi2c, MAX30102_REG_SPO2_CONFIG, &config);
+	config = (config & 0x7C) | (pulse_width << MAX30102_SPO2_CONFIG_LED_PW);
+	return 0;
+}
+int max30102_set_adc_resolution(I2C_HandleTypeDef *hi2c, max30102_adc_t adc);
+int max30102_set_sampling_rate(I2C_HandleTypeDef *hi2c, max30102_sr_t sample_rate);
+int max30102_set_led_current_1(I2C_HandleTypeDef *hi2c, float ma); // IR
+
+int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode);
+int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable);
+
+
 int max30102_write(I2C_HandleTypeDef *hi2c, uint8_t memAddr, const uint8_t *pData, uint16_t size) {
 	i2c_err = 0;
 	i2c_done = 0;
