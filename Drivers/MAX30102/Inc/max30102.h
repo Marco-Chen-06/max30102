@@ -70,7 +70,7 @@ int max30102_clear_fifo(I2C_HandleTypeDef *hi2c);
 int max30102_init_fifo(I2C_HandleTypeDef *hi2c, max30102_smp_ave_t smp_ave, uint8_t rollover_en, uint8_t fifo_a_full);
 
 int max30102_set_led_pulse_width(I2C_HandleTypeDef *hi2c, max30102_led_pw_t pulse_width);
-int max30102_set_adc_resolution(I2C_HandleTypeDef *hi2c, max30102_adc_t adc);
+int max30102_set_adc_resolution(I2C_HandleTypeDef *hi2c, max30102_adc_t adc_rge);
 int max30102_set_sampling_rate(I2C_HandleTypeDef *hi2c, max30102_sr_t sample_rate);
 int max30102_set_led_current_1(I2C_HandleTypeDef *hi2c, float ma); // IR
 
