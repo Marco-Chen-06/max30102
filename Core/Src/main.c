@@ -100,6 +100,16 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   max30102_init(&hi2c2);
+  max30102_reset(&hi2c2);
+  max30102_clear_fifo(&hi2c2);
+  max30102_init_fifo(&hi2c2, max30102_smp_ave_8, 1, 7);
+
+  max30102_set_led_pulse_width(&hi2c2, max30102_pw_16_bit);
+  max30102_set_adc_resolution(&hi2c2, max30102_adc_2048);
+  max30102_set_sampling_rate(&hi2c2, max30102_sr_800);
+  max30102_set_led_current_1(&hi2c2, 6.2);
+
+  max30102_set_mode(&hi2c2, max30102_heart_rate);
   /* USER CODE END 2 */
 
   /* Infinite loop */

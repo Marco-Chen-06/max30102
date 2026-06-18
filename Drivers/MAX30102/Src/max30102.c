@@ -109,6 +109,15 @@ int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable) {
 	return 0;
 }
 
+int max30102_has_interrupt(I2C_HandleTypeDef *hi2c) {
+	uint8_t status = 0;
+	max30102_read_byte(hi2c, MAX30102_REG_INT_STATUS1, &status);
+	if (status & (0x01 << MAX30102_INT_STATUS1_A_FULL)) {
+		return 1;
+	}
+	return 0;
+}
+
 int max30102_write(I2C_HandleTypeDef *hi2c, uint8_t memAddr, const uint8_t *pData, uint16_t size) {
 	i2c_err = 0;
 	i2c_done = 0;

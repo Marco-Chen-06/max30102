@@ -77,6 +77,10 @@ int max30102_set_led_current_1(I2C_HandleTypeDef *hi2c, float ma); // IR
 int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode);
 int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable);
 
+int max30102_has_interrupt(I2C_HandleTypeDef *hi2c);
+int max30102_interrupt_handler(I2C_HandleTypeDef *hi2c);
+
+
 
 
 #endif
