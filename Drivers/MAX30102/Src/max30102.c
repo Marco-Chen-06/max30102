@@ -79,15 +79,35 @@ int max30102_set_sampling_rate(I2C_HandleTypeDef *hi2c, max30102_sr_t sample_rat
 	max30102_read_byte(hi2c, MAX30102_REG_SPO2_CONFIG, &config);
 	config = (config & 0x63) | (sample_rate << MAX30102_SPO2_CONFIG_SPO2_SR);
 	max30102_write_byte(hi2c, MAX30102_REG_SPO2_CONFIG, config);
+	return 0;
 }
+
 // Set LED current for the IR led
 int max30102_set_led_current_1(I2C_HandleTypeDef *hi2c, float ma) {
+	uint8_t config = ma / 0.2;
+	max30102_write_byte(hi2c, MAX30102_REG_LED1_PA, config);
+	return 0;
 
 }
 
-int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode);
-int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable);
+int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode) {
+	uint8_t config = 0;
+	max30102_read_byte(hi2c, MAX30102_REG_MODE_CONFIG, &config);
+	config = (config & 0xF8) | (mode << MAX30102_MODE_CONFIG_MODE);
+	max30102_write_byte(hi2c, MAX30102_REG_MODE_CONFIG, config);
+	max30102_clear_fifo(hi2c);
+	return 0;
+}
 
+
+int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable) {
+	uint8_t config = 0;
+	max30102_read_byte(hi2c, MAX30102_REG_INT_EN1, &config);
+	config &= ~(0x01 << MAX30102_INT_EN1_A_FULL_EN);
+	config |= ((enable & 0x01) << MAX30102_INT_EN1_A_FULL_EN);
+	max30102_write_byte(hi2c, MAX30102_REG_INT_EN1, config);
+	return 0;
+}
 
 int max30102_write(I2C_HandleTypeDef *hi2c, uint8_t memAddr, const uint8_t *pData, uint16_t size) {
 	i2c_err = 0;
@@ -130,4 +150,8 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
 
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	i2c_done = 1;
+}
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
+	i2c_err = HAL_I2C_GetError(hi2c);
 }

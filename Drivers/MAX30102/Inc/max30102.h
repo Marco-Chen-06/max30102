@@ -78,4 +78,5 @@ int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode);
 int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable);
 
 
+
 #endif
