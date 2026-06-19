@@ -5,6 +5,16 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
+
+#define MAX30102_SAMPLE_LEN_MAX 32
+
+typedef struct max30102_t
+{
+    I2C_HandleTypeDef *_ui2c;
+    uint32_t _ir_samples[MAX30102_SAMPLE_LEN_MAX];
+    uint8_t _interrupt_flag;
+} max30102_t;
 
 typedef enum max30102_mode_t
 {
@@ -58,27 +68,30 @@ typedef enum max30102_multi_led_ctrl_t
     max30102_led_ir
 } max30102_multi_led_ctrl_t;
 
-int max30102_write(I2C_HandleTypeDef *hi2c, uint8_t memAddr, const uint8_t *pData, uint16_t size);
-int max30102_read(I2C_HandleTypeDef *hi2c, uint8_t memAddr, uint8_t *pData, uint16_t size);
-int max30102_write_byte(I2C_HandleTypeDef *hi2c, uint8_t memAddr, uint8_t byte);
-int max30102_read_byte(I2C_HandleTypeDef *hi2c, uint8_t memAddr, uint8_t *byte);
+int max30102_write(max30102_t *dev, uint8_t memAddr, const uint8_t *pData, uint16_t size);
+int max30102_read(max30102_t *dev, uint8_t memAddr, uint8_t *pData, uint16_t size);
+int max30102_write_byte(max30102_t *dev, uint8_t memAddr, uint8_t byte);
+int max30102_read_byte(max30102_t *dev, uint8_t memAddr, uint8_t *byte);
 
 // perform initialization sequence
-int max30102_init(I2C_HandleTypeDef *hi2c);
-int max30102_reset(I2C_HandleTypeDef *hi2c);
-int max30102_clear_fifo(I2C_HandleTypeDef *hi2c);
-int max30102_init_fifo(I2C_HandleTypeDef *hi2c, max30102_smp_ave_t smp_ave, uint8_t rollover_en, uint8_t fifo_a_full);
+int max30102_init(max30102_t *dev, I2C_HandleTypeDef *hi2c);
+int max30102_reset(max30102_t *dev);
+int max30102_clear_fifo(max30102_t *dev);
+int max30102_init_fifo(max30102_t *dev, max30102_smp_ave_t smp_ave, uint8_t rollover_en, uint8_t fifo_a_full);
 
-int max30102_set_led_pulse_width(I2C_HandleTypeDef *hi2c, max30102_led_pw_t pulse_width);
-int max30102_set_adc_resolution(I2C_HandleTypeDef *hi2c, max30102_adc_t adc_rge);
-int max30102_set_sampling_rate(I2C_HandleTypeDef *hi2c, max30102_sr_t sample_rate);
-int max30102_set_led_current_1(I2C_HandleTypeDef *hi2c, float ma); // IR
+int max30102_set_led_pulse_width(max30102_t *dev, max30102_led_pw_t pulse_width);
+int max30102_set_adc_resolution(max30102_t *dev, max30102_adc_t adc_rge);
+int max30102_set_sampling_rate(max30102_t *dev, max30102_sr_t sample_rate);
+int max30102_set_led_current_1(max30102_t *dev, float ma); // IR
 
-int max30102_set_mode(I2C_HandleTypeDef *hi2c, max30102_mode_t mode);
-int max30102_set_a_full(I2C_HandleTypeDef *hi2c, uint8_t enable);
+int max30102_set_mode(max30102_t *dev, max30102_mode_t mode);
+int max30102_set_a_full(max30102_t *dev, uint8_t enable);
 
-int max30102_has_interrupt(I2C_HandleTypeDef *hi2c);
-int max30102_interrupt_handler(I2C_HandleTypeDef *hi2c);
+int max30102_on_interrupt(max30102_t *dev);
+int max30102_has_interrupt(max30102_t *dev);
+int max30102_interrupt_handler(max30102_t *dev);
+int max30102_read_fifo(max30102_t *dev);
+
 
 
 

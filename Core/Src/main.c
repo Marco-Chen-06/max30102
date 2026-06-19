@@ -48,7 +48,7 @@ I2C_HandleTypeDef hi2c2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+max30102_t max30102;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,17 +99,18 @@ int main(void)
   MX_I2C2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  max30102_init(&hi2c2);
-  max30102_reset(&hi2c2);
-  max30102_clear_fifo(&hi2c2);
-  max30102_init_fifo(&hi2c2, max30102_smp_ave_8, 1, 7);
+  max30102_init(&max30102, &hi2c2);
+  max30102_reset(&max30102);
+  max30102_clear_fifo(&max30102);
+  max30102_init_fifo(&max30102, max30102_smp_ave_8, 1, 7);
 
-  max30102_set_led_pulse_width(&hi2c2, max30102_pw_16_bit);
-  max30102_set_adc_resolution(&hi2c2, max30102_adc_2048);
-  max30102_set_sampling_rate(&hi2c2, max30102_sr_800);
-  max30102_set_led_current_1(&hi2c2, 6.2);
+  max30102_set_led_pulse_width(&max30102, max30102_pw_16_bit);
+  max30102_set_adc_resolution(&max30102, max30102_adc_2048);
+  max30102_set_sampling_rate(&max30102, max30102_sr_800);
+  max30102_set_led_current_1(&max30102, 6.2);
 
-  max30102_set_mode(&hi2c2, max30102_heart_rate);
+  max30102_set_mode(&max30102, max30102_heart_rate);
+  max30102_set_a_full(&max30102, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,8 +120,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  HAL_Delay(500);
+	  if (max30102_has_interrupt(&max30102)) {
+		  max30102_interrupt_handler(&max30102);
+	  }
+//	  max30102_read_fifo(&max30102);
+//	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
   }
   /* USER CODE END 3 */
 }
@@ -359,6 +363,17 @@ int __io_putchar(int ch) {
 	HAL_UART_Transmit(&huart2, (uint8_t*) &ch, 1, 0xFFFF);
 	return ch;
 }
+
+// Override plot function
+void max30102_plot(uint32_t ir_sample)
+{
+     printf("%lu\r\n", ir_sample);  // print IR adc value
+}
+
+
+
+
+
 /* USER CODE END 4 */
 
 /**
