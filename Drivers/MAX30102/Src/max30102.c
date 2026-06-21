@@ -125,6 +125,17 @@ int max30102_set_a_full(max30102_t *dev, uint8_t enable) {
 	return 0;
 }
 
+int max30102_set_ppg_ready(max30102_t *dev, uint8_t enable) {
+	uint8_t config = 0;
+	max30102_read_byte(dev, MAX30102_REG_INT_EN1, &config);
+	config &= ~(0x01 << MAX30102_INT_EN1_PPG_RDY_EN);
+	config |= ((enable & 0x01) << MAX30102_INT_EN1_PPG_RDY_EN);
+	max30102_write_byte(dev, MAX30102_REG_INT_EN1, config);
+	uint8_t status[2];
+	max30102_read(dev, MAX30102_REG_INT_STATUS1, status, 2);
+	return 0;
+}
+
 int max30102_on_interrupt(max30102_t *dev) {
 	dev->_interrupt_flag = 1;
 	return 0;
@@ -138,7 +149,7 @@ int max30102_interrupt_handler(max30102_t *dev) {
 	uint8_t reg[2] = {0x00};
 	// Interrupts are cleared whenever the interrupt status register is read
 	max30102_read(dev, MAX30102_REG_INT_STATUS1, reg, 2);
-	if ((reg[0] >> MAX30102_INT_STATUS1_A_FULL) & 0x01) {
+	if (((reg[0] >> MAX30102_INT_STATUS1_A_FULL) & 0x01) || ((reg[0] >> MAX30102_INT_STATUS1_PPG_RDY) & 0x01)) {
 		max30102_read_fifo(dev);
 	}
 	dev->_interrupt_flag = 0;

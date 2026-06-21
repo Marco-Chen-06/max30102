@@ -86,6 +86,7 @@ int max30102_set_led_current_1(max30102_t *dev, float ma); // IR
 
 int max30102_set_mode(max30102_t *dev, max30102_mode_t mode);
 int max30102_set_a_full(max30102_t *dev, uint8_t enable);
+int max30102_set_ppg_ready(max30102_t *dev, uint8_t enable);
 
 int max30102_on_interrupt(max30102_t *dev);
 int max30102_has_interrupt(max30102_t *dev);

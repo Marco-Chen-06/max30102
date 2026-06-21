@@ -110,7 +110,7 @@ int main(void)
   max30102_set_led_current_1(&max30102, 6.2);
 
   max30102_set_mode(&max30102, max30102_heart_rate);
-  max30102_set_a_full(&max30102, 1);
+  max30102_set_ppg_ready(&max30102, 1);
 
   /* USER CODE END 2 */
 
