@@ -126,6 +126,8 @@ int main(void)
 	  if (max30102_has_interrupt(&max30102)) {
 		  max30102_interrupt_handler(&max30102);
 	  }
+	  HAL_Delay(1);
+	  // 1 ms sampling rate to account for 800 hz ppg sampling
 
 //	  max30102_read_fifo(&max30102);
 //	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
