@@ -111,18 +111,22 @@ int main(void)
 
   max30102_set_mode(&max30102, max30102_heart_rate);
   max30102_set_a_full(&max30102, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  if (max30102_has_interrupt(&max30102)) {
 		  max30102_interrupt_handler(&max30102);
 	  }
+
 //	  max30102_read_fifo(&max30102);
 //	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
   }
